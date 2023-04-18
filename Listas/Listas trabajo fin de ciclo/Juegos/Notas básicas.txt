@@ -1,0 +1,1 @@
+Esta lista se conecta correctamente con SharePoint. Funciona bien y se crean los tipos correctamente.

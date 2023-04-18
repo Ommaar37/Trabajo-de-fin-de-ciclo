@@ -1,0 +1,2 @@
+Esta carpeta es para compartir con Rubén e ir guardando cambios, para que funcione debería añadir también la carperta de node modules pero tardaría demasiado y petaría el disco. 
+Para poder ejecutarlo desde casa o desde clase, debo hacer npm install.

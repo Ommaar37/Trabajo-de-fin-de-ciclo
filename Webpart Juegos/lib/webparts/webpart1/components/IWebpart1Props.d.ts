@@ -1,0 +1,1 @@
+//# sourceMappingURL=IWebpart1Props.d.ts.map

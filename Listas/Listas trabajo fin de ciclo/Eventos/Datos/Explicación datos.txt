@@ -1,0 +1,60 @@
+Explicación inserción de datos en eventos:
+
+Es una inserción de datos con un lookup.
+
+	-Primera parte a explicar del código:
+	
+$listaEventos = $context.web.Lists.GetByTitle("Eventos");
+$itemsEventos = $listaEventos.GetItems([Microsoft.SharePoint.Client.CamlQuery]::CreateAllItemsQuery());
+$listaJuegos = $context.web.Lists.GetByTitle("Juegos");
+$itemsJuegos = $listaJuegos.GetItems([Microsoft.SharePoint.Client.CamlQuery]::CreateAllItemsQuery());
+$context.Load($listaJuegos);
+$context.Load($itemsJuegos);
+$context.Load($listaEventos);
+$context.Load($itemsEventos);
+$context.ExecuteQuery();
+
+En esta primera parte del código, extraemos los datos de las listas "Eventos" y "Juegos", guardamos los datos obtenidos (toda la lista) dentro de una variable y hacemos un executeQuery.
+
+
+	-Segunda parte del código.
+	
+foreach ($itemEvento in $itemsEventos) {
+    $EventosSP[$itemEvento["Title"]] = $itemEvento;
+}
+
+$juegosSP = $itemsJuegos | Group-Object {$_.FieldValues.Title} -AsHashTable -AsString;
+
+$csvEventos = Import-Csv $csvPath"\02.Eventos.csv" ";" -Encoding UTF8;
+$i = 0;
+$needExecute = $false;
+
+
+	-Tercera parte del código.
+$csvEventos  | ForEach-Object { 
+
+    $i++;
+
+    #comprobamos si el juego existe en SP
+    if ($null -ne $juegosSP[$_.Titulo_Juego]) {
+
+        $juegoCSV = $juegosSP[$_.Titulo_Juego][0].Id;
+
+        #comprobamos si el evento ya existe en SP;
+        if ($null -eq $EventosSP[$_.TituloEvento]) {
+                $itemInfo  = New-Object Microsoft.SharePoint.Client.ListItemCreationInformation
+                $item = $listaEventos.AddItem($itemInfo)
+                $item["Title"] = $_.TituloEvento;
+                $item["E_Juego"] = $juegoCSV;
+                $item.Update();
+                $needExecute = $true;
+                Write-Host "|--- $($_.TituloEvento) preparado para crear" -foregroundcolor Green  
+        }
+        else {
+                Write-Host "|--- $($_.TituloEvento) ya existe" -foregroundcolor Green
+				#Aquí deberíamos añadir el resto de las variables necesarias de nuestra lista eventos.
+        }
+     }
+     else {
+        write-host "El juego $($_.Titulo_Juego) no existe" -ForegroundColor Red
+     }
