@@ -12,6 +12,19 @@
 .welcome {
   text-align: center;
 }
+.Table {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+.boton1{
+  display: block;
+  margin-bottom: 30px;
+}
+
+Table th,
+Table td {
+  border: 1px solid black; 
+}
 
 .welcomeImage {
   width: 100%;
