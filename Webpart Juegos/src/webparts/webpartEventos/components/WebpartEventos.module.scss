@@ -1,6 +1,6 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 
-.webpart1 {
+.webpartEventos {
   overflow: hidden;
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
@@ -9,25 +9,9 @@
     font-family: $ms-font-family-fallbacks;
   }
 }
+
 .welcome {
   text-align: center;
-}
-.Table {
-  border-collapse: collapse;
-  border: 1px solid black;
-}
-.boton1{
-  display: block;
-  margin-bottom: 30px;
-}
-.verresenas{
-  display: block;
-  width: 20px;
-}
-
-Table th,
-Table td {
-  border: 1px solid black; 
 }
 
 .welcomeImage {

@@ -3,21 +3,24 @@ import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { SPFI } from "@pnp/sp";
 import { Button, Modal, Table } from 'antd';
 import { useState } from 'react';
-import styles from "./Webpart1.module.scss"
+import styles from "./Webpart1.module.scss";
 import { TextField } from '@fluentui/react/lib/TextField';
 import { IStackProps, IStackStyles, IStackTokens, Stack } from '@fluentui/react/lib/Stack';
 import { Dropdown, DropdownMenuItemType, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import * as moment from "moment"
+import * as moment from "moment";
 import { DateTimePicker, DateConvention} from "@pnp/spfx-controls-react/lib/DateTimePicker";
+import { IconButton } from '@fluentui/react';
+import { IList } from '@pnp/sp/lists';
 
 //Definición de las columnas y petición para extraer los datos de la misma.
 const columns = [
   {
     title: 'Acciones',
-    dataIndex: 'acciones',
-    key: 'Title',
-    render: () => {
-      return (<a href="//Aquí va la ruta al la página de sharepoint donde se mostraran los datos en profundidad de cada juego">Ver</a>)
+    dataIndex: 'ID',
+    key: 'ID',
+    render: (id:number) => {
+      return (<IconButton iconProps={{ iconName: 'Rocket' }} aria-label="Ver" 
+      onClick={()=> {window.open(`https://onlinecomasis.sharepoint.com/sites/Omar/SitePages/Rese%C3%B1as.aspx?jid=${id}`)}}/>)
     }
   },
   {
@@ -47,6 +50,7 @@ const columns = [
     key: 'J_Dur',
   },
 ];
+
 interface JuegoItem {
   Title: string;
   J_Desc: string;
@@ -86,14 +90,15 @@ export default function HelloWorld(props: IWebpart1Props) {
 
   const cargarDatos = async function () {
 
-    var lista: any = await props.SP.web.lists.getByTitle("Juegos")
+    var lista: IList = await props.SP.web.lists.getByTitle("Juegos")
 
     var juegos = await lista.items.top(5000).select("*")();
-
-    let filas = [];
+//var juego = await lista.items.getById(params.id)();
+   let filas = [];
 
     juegos.map((j: any) => {
       filas.push({
+        'ID': j.ID,
         'Title': j.Title,
         'J_Dur': j.J_Dur,
         'J_Lanz ': j.J_Lanz,
@@ -102,8 +107,6 @@ export default function HelloWorld(props: IWebpart1Props) {
       })
       console.log(j.Title);
     })
-
-
     setDatos(juegos);
   }
 
@@ -118,9 +121,6 @@ export default function HelloWorld(props: IWebpart1Props) {
     setIsModalOpen(false);
    
     const fechaString = fecha.toISOString();
-    alert(nombre+descripcion+fechaString+genero.text+duracion.text);
-    console.log(fecha)
-    console.log(fechaString)
     //Accion de guardar
     var item: any = {};
     item["Title"] = nombre;
@@ -184,7 +184,7 @@ export default function HelloWorld(props: IWebpart1Props) {
       <Button className={styles.boton1} type="primary" onClick={showModal}>
         Añadir nuevo juego.
       </Button>
-      <a href="PÁGINA DE EVENTOS">
+      <a href="PÁGINA DE EVENTOS" className={styles.verresenas}>
       <Button className={styles.boton1} type="primary">
         Ver proximos eventos.
       </Button>
